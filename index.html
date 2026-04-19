@@ -1,0 +1,587 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PhD OS · GitHub Pages Edition</title>
+  <meta name="description" content="Clean-room, GitHub Pages-ready PhD workspace with local-first storage." />
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+  <div class="shell" id="appShell">
+    <aside class="sidebar" id="sidebar">
+      <div class="brand">
+        <div class="brand-mark">Φ</div>
+        <div>
+          <h1>PhD OS</h1>
+          <p>GitHub Pages Edition</p>
+        </div>
+      </div>
+
+      <div class="sidebar-clock card-lite">
+        <div id="sidebarDate"></div>
+        <div id="sidebarTime"></div>
+      </div>
+
+      <nav class="nav" id="mainNav">
+        <button class="nav-btn active" data-section="home">总览</button>
+        <button class="nav-btn" data-section="projects">项目与任务</button>
+        <button class="nav-btn" data-section="thesis">论文进度</button>
+        <button class="nav-btn" data-section="submissions">投稿管理</button>
+        <button class="nav-btn" data-section="health">健康管理</button>
+        <button class="nav-btn" data-section="care">心灵关怀</button>
+        <button class="nav-btn" data-section="mentor">导师沟通</button>
+        <button class="nav-btn" data-section="review">每日复盘</button>
+        <button class="nav-btn" data-section="achievements">成就</button>
+        <button class="nav-btn" data-section="dashboard">数据看板</button>
+        <button class="nav-btn" data-section="settings">设置与数据</button>
+      </nav>
+
+      <div class="sidebar-stats card-lite" id="sidebarStats"></div>
+    </aside>
+
+    <main class="main">
+      <header class="topbar card">
+        <div>
+          <h2 id="sectionTitle">总览</h2>
+          <p id="sectionSubtitle">更合理的架构、完全静态部署、所有数据仅保存在本地浏览器。</p>
+        </div>
+        <div class="topbar-actions">
+          <button class="btn ghost" id="toggleSidebarBtn">收起侧栏</button>
+          <button class="btn ghost" id="jumpTodayBtn">回到今天</button>
+        </div>
+      </header>
+
+      <section class="section active" id="section-home">
+        <div class="grid cols-3">
+          <div class="card hero span-2">
+            <div>
+              <div class="eyebrow">总览</div>
+              <h3>你的博士操作系统</h3>
+              <p>以 clean-room 方式重写，保留原方案的功能精神，但使用更清晰的状态管理、模块化渲染和 GitHub Pages 友好的静态结构。</p>
+            </div>
+            <div class="hero-actions">
+              <button class="btn primary" data-go="projects">去看项目看板</button>
+              <button class="btn secondary" data-go="dashboard">查看统计</button>
+            </div>
+          </div>
+          <div class="card graduation-card">
+            <div class="section-head compact">
+              <div>
+                <div class="eyebrow">新增功能</div>
+                <h3>毕业 DDL 进度</h3>
+              </div>
+            </div>
+            <div id="graduationProgressHome" class="ring-grid"></div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="section-head compact">
+            <div>
+              <div class="eyebrow">首次使用</div>
+              <h3>面向用户的最短路径</h3>
+            </div>
+          </div>
+          <div class="info-list">
+            <div class="item"><strong>1.</strong> 先在“论文进度”里填写入学时间、预计毕业时间、预计答辩时间。</div>
+            <div class="item"><strong>2.</strong> 在“项目与任务”里先建项目，再建任务；当天临时事项可直接在总览里新增。</div>
+            <div class="item"><strong>3.</strong> 任务开始时点“开始”，进入深度工作时点“开始专注”。</div>
+            <div class="item"><strong>4.</strong> 把关键任务排进“今日时间块”，避免只列待办不落地。</div>
+            <div class="item"><strong>5.</strong> 每天结束前写“每日复盘”，并在“设置与数据”里定期导出 JSON 备份。</div>
+          </div>
+        </div>
+
+        <div class="grid cols-4 stats-grid" id="homeStats"></div>
+
+        <div class="grid cols-2">
+          <div class="card">
+            <div class="section-head">
+              <div>
+                <div class="eyebrow">工作流</div>
+                <h3>打卡与请假</h3>
+              </div>
+            </div>
+            <div class="control-row wrap">
+              <button class="btn primary" id="startWorkBtn">开始工作</button>
+              <button class="btn secondary" id="endWorkBtn">结束工作</button>
+              <select id="leaveTypeInput">
+                <option value="病假">病假</option>
+                <option value="事假">事假</option>
+                <option value="会议">会议</option>
+                <option value="出差">出差</option>
+                <option value="休息">休息</option>
+                <option value="其他">其他</option>
+              </select>
+              <button class="btn ghost" id="addLeaveBtn">记录请假</button>
+            </div>
+            <div id="attendanceSummary" class="info-list"></div>
+          </div>
+
+          <div class="card">
+            <div class="section-head">
+              <div>
+                <div class="eyebrow">专注</div>
+                <h3>专注计时器</h3>
+              </div>
+              <div class="timer" id="focusClock">00:00:00</div>
+            </div>
+            <div class="grid cols-2 compact-grid">
+              <input id="focusTitleInput" placeholder="专注主题，可留空自动读取进行中任务" />
+              <select id="focusCategoryInput">
+                <option value="research">科研</option>
+                <option value="writing">写作</option>
+                <option value="reading">阅读</option>
+                <option value="admin">事务</option>
+                <option value="other">其他</option>
+              </select>
+            </div>
+            <input id="focusNoteInput" placeholder="备注（可选）" />
+            <div class="control-row">
+              <button class="btn primary" id="focusStartBtn">开始</button>
+              <button class="btn secondary" id="focusStopBtn">结束</button>
+              <button class="btn ghost" id="focusDiscardBtn">放弃本次</button>
+            </div>
+            <div id="focusSummary" class="info-list"></div>
+          </div>
+        </div>
+
+        <div class="grid cols-2">
+          <div class="card">
+            <div class="section-head">
+              <div>
+                <div class="eyebrow">执行</div>
+                <h3>今日任务</h3>
+              </div>
+            </div>
+            <div class="control-row">
+              <input id="quickTaskInput" placeholder="临时任务，例如：修改图 3" />
+              <button class="btn primary" id="addQuickTaskBtn">新增</button>
+            </div>
+            <div id="todayTaskList" class="stack-list"></div>
+          </div>
+
+          <div class="card">
+            <div class="section-head">
+              <div>
+                <div class="eyebrow">日程</div>
+                <h3>今日时间块</h3>
+              </div>
+            </div>
+            <div class="grid cols-4 compact-grid">
+              <select id="scheduleTaskSelect"></select>
+              <input type="time" id="scheduleStartInput" />
+              <input type="time" id="scheduleEndInput" />
+              <button class="btn primary" id="addScheduleBtn">排入</button>
+            </div>
+            <input id="scheduleTitleInput" placeholder="可改写时间块标题" />
+            <div id="scheduleTimeline" class="timeline"></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="section-projects">
+        <div class="grid cols-2">
+          <div class="card">
+            <div class="section-head">
+              <div>
+                <div class="eyebrow">项目</div>
+                <h3>新增项目</h3>
+              </div>
+            </div>
+            <div class="grid cols-2 compact-grid">
+              <input id="projectTitleInput" placeholder="项目名" />
+              <input id="projectOutcomeInput" placeholder="结果产出" />
+              <select id="projectAreaInput">
+                <option value="research">科研 / 实验</option>
+                <option value="writing">写作 / 论文</option>
+                <option value="submission">投稿 / 发表</option>
+                <option value="admin">行政 / 沟通</option>
+                <option value="life">生活 / 健康</option>
+                <option value="other">其他</option>
+              </select>
+              <input type="date" id="projectStartInput" />
+              <input type="date" id="projectDeadlineInput" />
+              <button class="btn primary" id="addProjectBtn">保存项目</button>
+            </div>
+            <div id="projectList" class="stack-list"></div>
+          </div>
+
+          <div class="card">
+            <div class="section-head">
+              <div>
+                <div class="eyebrow">任务</div>
+                <h3>新增任务</h3>
+              </div>
+            </div>
+            <div class="grid cols-2 compact-grid">
+              <input id="taskTitleInput" placeholder="任务标题" />
+              <select id="taskProjectInput"></select>
+              <select id="taskQuadrantInput">
+                <option value="q1">重要且紧急</option>
+                <option value="q2" selected>重要不紧急</option>
+                <option value="q3">紧急不重要</option>
+                <option value="q4">不紧急不重要</option>
+              </select>
+              <select id="taskStatusInput">
+                <option value="planned">计划中</option>
+                <option value="todo">未开始</option>
+                <option value="active">进行中</option>
+                <option value="done">已完成</option>
+              </select>
+              <input type="date" id="taskDueInput" />
+              <button class="btn primary" id="addTaskBtn">保存任务</button>
+            </div>
+            <div class="control-row wrap">
+              <select id="taskFilterInput">
+                <option value="all">全部任务</option>
+                <option value="today">今日候选</option>
+                <option value="q1">重要且紧急</option>
+                <option value="q2">重要不紧急</option>
+                <option value="q3">紧急不重要</option>
+                <option value="q4">不紧急不重要</option>
+              </select>
+              <select id="taskProjectFilterInput"></select>
+            </div>
+            <div class="kanban" id="taskBoard"></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="section-thesis">
+        <div class="grid cols-3">
+          <div class="card span-2">
+            <div class="section-head">
+              <div>
+                <div class="eyebrow">论文</div>
+                <h3>论文信息与毕业时间轴</h3>
+              </div>
+            </div>
+            <div class="grid cols-2 compact-grid">
+              <input id="thesisTitleInput" placeholder="论文题目" />
+              <input id="thesisVersionInput" placeholder="当前版本，例如 v2" />
+              <input type="date" id="enrollmentDateInput" />
+              <input type="date" id="graduationDateInput" />
+              <input type="date" id="defenseDateInput" />
+              <button class="btn primary" id="saveThesisMetaBtn">保存</button>
+            </div>
+            <input id="thesisNoteInput" placeholder="备注，例如：本周先补图" />
+            <div id="graduationProgressThesis" class="ring-grid large"></div>
+          </div>
+          <div class="card">
+            <div class="section-head">
+              <div>
+                <div class="eyebrow">总体</div>
+                <h3>论文总进度</h3>
+              </div>
+            </div>
+            <div id="thesisOverallPanel"></div>
+          </div>
+        </div>
+
+        <div class="grid cols-2">
+          <div class="card">
+            <div class="section-head"><div><div class="eyebrow">里程碑</div><h3>Milestones</h3></div></div>
+            <div class="grid cols-2 compact-grid">
+              <input id="milestoneNameInput" placeholder="新增里程碑" />
+              <input type="date" id="milestoneDueInput" />
+            </div>
+            <button class="btn primary full" id="addMilestoneBtn">添加里程碑</button>
+            <div id="milestoneList" class="stack-list"></div>
+          </div>
+          <div class="card">
+            <div class="section-head"><div><div class="eyebrow">章节</div><h3>Chapter Progress</h3></div></div>
+            <div class="grid cols-2 compact-grid">
+              <input id="chapterNameInput" placeholder="新增章节" />
+              <select id="chapterStatusInput">
+                <option value="draft">草稿</option>
+                <option value="revise">修改中</option>
+                <option value="done">完成</option>
+              </select>
+            </div>
+            <button class="btn primary full" id="addChapterBtn">添加章节</button>
+            <div id="chapterList" class="stack-list"></div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="section-head"><div><div class="eyebrow">推进日志</div><h3>Writing / Revision Log</h3></div></div>
+          <div class="grid cols-5 compact-grid">
+            <input type="date" id="thesisLogDateInput" />
+            <select id="thesisLogTypeInput">
+              <option value="writing">写作</option>
+              <option value="revise">修改</option>
+              <option value="experiment">实验</option>
+              <option value="meeting">讨论 / 组会</option>
+              <option value="other">其他</option>
+            </select>
+            <input type="number" min="0" id="thesisLogMinutesInput" placeholder="分钟" />
+            <input type="number" min="0" id="thesisLogWordsInput" placeholder="字数（可选）" />
+            <input id="thesisLogNoteInput" placeholder="备注" />
+          </div>
+          <button class="btn primary full" id="addThesisLogBtn">添加日志</button>
+          <div id="thesisLogList" class="stack-list"></div>
+        </div>
+      </section>
+
+      <section class="section" id="section-submissions">
+        <div class="grid cols-2">
+          <div class="card">
+            <div class="section-head"><div><div class="eyebrow">投稿</div><h3>新增投稿项目</h3></div></div>
+            <div class="grid cols-2 compact-grid">
+              <input id="submissionTitleInput" placeholder="题目 / 项目名" />
+              <input id="submissionVenueInput" placeholder="期刊 / 会议名" />
+              <input type="date" id="submissionDeadlineInput" />
+              <select id="submissionStageInput"></select>
+              <select id="submissionTypeInput">
+                <option value="Journal">Journal</option>
+                <option value="Conference">Conference</option>
+                <option value="Workshop">Workshop</option>
+                <option value="Other">Other</option>
+              </select>
+              <button class="btn primary" id="addSubmissionBtn">保存投稿</button>
+            </div>
+            <textarea id="submissionNotesInput" rows="3" placeholder="备注，例如 camera-ready / 第 3 版"></textarea>
+            <div id="submissionArchive" class="stack-list"></div>
+          </div>
+          <div class="card">
+            <div class="section-head"><div><div class="eyebrow">流程</div><h3>投稿流程看板</h3></div></div>
+            <div class="control-row wrap">
+              <input id="submissionFilterQueryInput" placeholder="题目 / venue 过滤" />
+              <select id="submissionFilterStageInput"></select>
+            </div>
+            <div id="submissionBoard" class="kanban"></div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="section-head"><div><div class="eyebrow">推进日志</div><h3>Submission Logs</h3></div></div>
+          <div class="grid cols-4 compact-grid">
+            <select id="submissionLogProjectInput"></select>
+            <input type="date" id="submissionLogDateInput" />
+            <select id="submissionLogTypeInput">
+              <option value="写作">写作</option>
+              <option value="修改">修改</option>
+              <option value="实验/分析">实验/分析</option>
+              <option value="投稿材料">投稿材料</option>
+              <option value="沟通">沟通</option>
+              <option value="推进">推进</option>
+            </select>
+            <input type="number" min="0" id="submissionLogMinutesInput" placeholder="分钟" />
+          </div>
+          <textarea id="submissionLogNoteInput" rows="3" placeholder="今天推进了什么？下一步是什么？"></textarea>
+          <div class="control-row">
+            <button class="btn primary" id="addSubmissionLogBtn">添加推进日志</button>
+            <button class="btn ghost" id="downloadSubmissionMdBtn">下载 Markdown</button>
+          </div>
+          <div id="submissionLogList" class="stack-list"></div>
+        </div>
+      </section>
+
+      <section class="section" id="section-health">
+        <div class="grid cols-2">
+          <div class="card">
+            <div class="section-head"><div><div class="eyebrow">习惯</div><h3>健康习惯</h3></div></div>
+            <div class="grid cols-3 compact-grid">
+              <input id="habitNameInput" placeholder="习惯名，例如 补水" />
+              <input id="habitIconInput" placeholder="图标，例如 💧" />
+              <select id="habitModeInput">
+                <option value="checkbox">勾选完成</option>
+                <option value="count">次数</option>
+                <option value="duration">时长</option>
+                <option value="text">文字</option>
+              </select>
+            </div>
+            <button class="btn primary full" id="addHabitBtn">添加习惯</button>
+            <div id="habitList" class="stack-list"></div>
+          </div>
+          <div class="card">
+            <div class="section-head"><div><div class="eyebrow">记录</div><h3>饮食与体重</h3></div></div>
+            <div class="grid cols-2 compact-grid">
+              <select id="foodMealInput">
+                <option value="早餐">早餐</option>
+                <option value="午餐">午餐</option>
+                <option value="晚餐">晚餐</option>
+                <option value="加餐">加餐</option>
+                <option value="饮水/饮品">饮水/饮品</option>
+              </select>
+              <input id="foodTextInput" placeholder="记录内容" />
+            </div>
+            <button class="btn primary full" id="addFoodBtn">添加饮食记录</button>
+            <div class="grid cols-2 compact-grid top-gap">
+              <input type="number" min="0" step="0.1" id="weightValueInput" placeholder="体重数值" />
+              <select id="weightUnitInput">
+                <option value="kg">kg</option>
+                <option value="斤">斤</option>
+                <option value="lb">lb</option>
+              </select>
+            </div>
+            <button class="btn secondary full" id="addWeightBtn">添加体重记录</button>
+            <div id="healthSummary" class="stack-list"></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="section-care">
+        <div class="card">
+          <div class="section-head"><div><div class="eyebrow">情绪与恢复</div><h3>心灵关怀</h3></div></div>
+          <div class="grid cols-2 compact-grid">
+            <select id="careMoodInput">
+              <option value="overloaded">😣 超载</option>
+              <option value="tense">😕 紧绷</option>
+              <option value="steady">😐 平稳</option>
+              <option value="lighter">🙂 轻松</option>
+              <option value="energized">😊 充沛</option>
+            </select>
+            <div class="grid cols-2 compact-grid">
+              <select id="careStressInput">
+                <option value="1">压力 1</option>
+                <option value="2">压力 2</option>
+                <option value="3">压力 3</option>
+                <option value="4">压力 4</option>
+                <option value="5">压力 5</option>
+              </select>
+              <select id="careEnergyInput">
+                <option value="1">能量 1</option>
+                <option value="2">能量 2</option>
+                <option value="3">能量 3</option>
+                <option value="4">能量 4</option>
+                <option value="5">能量 5</option>
+              </select>
+            </div>
+            <textarea id="careChallengeInput" rows="3" placeholder="今天最消耗我的是什么"></textarea>
+            <textarea id="careSelfCareInput" rows="3" placeholder="我做了什么自我关怀"></textarea>
+            <textarea id="careGratitudeInput" rows="3" placeholder="我想感谢的一件事"></textarea>
+            <textarea id="careSupportInput" rows="3" placeholder="我需要的支持 / 边界"></textarea>
+          </div>
+          <textarea id="careNoteInput" rows="3" placeholder="对自己说的话"></textarea>
+          <button class="btn primary full" id="saveCareBtn">保存</button>
+          <div id="careList" class="stack-list"></div>
+        </div>
+      </section>
+
+      <section class="section" id="section-mentor">
+        <div class="card">
+          <div class="section-head"><div><div class="eyebrow">向上管理</div><h3>导师沟通记录</h3></div></div>
+          <div class="grid cols-2 compact-grid">
+            <select id="mentorStatusInput">
+              <option value="preparing">🧭 准备沟通</option>
+              <option value="waiting">⏳ 等反馈</option>
+              <option value="clarified">✅ 已明确</option>
+              <option value="blocked">🧱 被卡住</option>
+            </select>
+            <div class="grid cols-2 compact-grid">
+              <select id="mentorPressureInput">
+                <option value="1">压力 1</option>
+                <option value="2">压力 2</option>
+                <option value="3">压力 3</option>
+                <option value="4">压力 4</option>
+                <option value="5">压力 5</option>
+              </select>
+              <select id="mentorClarityInput">
+                <option value="1">清晰度 1</option>
+                <option value="2">清晰度 2</option>
+                <option value="3">清晰度 3</option>
+                <option value="4">清晰度 4</option>
+                <option value="5">清晰度 5</option>
+              </select>
+            </div>
+            <textarea id="mentorPreparedInput" rows="3" placeholder="我准备了什么"></textarea>
+            <textarea id="mentorAskInput" rows="3" placeholder="我要问什么 / 请求什么"></textarea>
+            <textarea id="mentorFeedbackInput" rows="3" placeholder="导师反馈 / 决策"></textarea>
+            <textarea id="mentorCommitmentInput" rows="3" placeholder="导师承诺 / 留痕"></textarea>
+          </div>
+          <textarea id="mentorNextInput" rows="3" placeholder="下一步动作"></textarea>
+          <button class="btn primary full" id="saveMentorBtn">保存</button>
+          <div id="mentorList" class="stack-list"></div>
+        </div>
+      </section>
+
+      <section class="section" id="section-review">
+        <div class="card">
+          <div class="section-head"><div><div class="eyebrow">复盘</div><h3>每日复盘</h3></div></div>
+          <div class="grid cols-2 compact-grid">
+            <select id="reviewEnergyInput">
+              <option value="1">😵 能量很低</option>
+              <option value="2">😕 偏低</option>
+              <option value="3">😐 一般</option>
+              <option value="4">🙂 不错</option>
+              <option value="5">🚀 很高</option>
+            </select>
+            <input id="reviewEnergyNoteInput" placeholder="能量备注" />
+            <textarea id="reviewAccomplishmentsInput" rows="3" placeholder="今日核心成果"></textarea>
+            <textarea id="reviewUnfinishedInput" rows="3" placeholder="未完成与拖延分析"></textarea>
+            <textarea id="reviewInsightsInput" rows="3" placeholder="学术洞见与新发现"></textarea>
+            <textarea id="reviewObstaclesInput" rows="3" placeholder="障碍与对策"></textarea>
+          </div>
+          <input id="reviewTomorrowInput" placeholder="明日优先任务，使用；分隔" />
+          <button class="btn primary full" id="saveReviewBtn">保存复盘</button>
+          <div id="reviewList" class="stack-list"></div>
+        </div>
+      </section>
+
+      <section class="section" id="section-achievements">
+        <div class="card">
+          <div class="section-head"><div><div class="eyebrow">里程碑</div><h3>成就殿堂</h3></div></div>
+          <div id="achievementGrid" class="achievement-grid"></div>
+        </div>
+      </section>
+
+      <section class="section" id="section-dashboard">
+        <div class="grid cols-2">
+          <div class="card">
+            <div class="section-head"><div><div class="eyebrow">趋势</div><h3>过去 8 周投入</h3></div></div>
+            <div id="weeklyBars" class="bars"></div>
+          </div>
+          <div class="card">
+            <div class="section-head"><div><div class="eyebrow">结构</div><h3>任务状态分布</h3></div></div>
+            <div id="taskStatusDonut"></div>
+          </div>
+        </div>
+        <div class="grid cols-3">
+          <div class="card"><div class="section-head"><div><div class="eyebrow">论文</div><h3>日志结构</h3></div></div><div id="thesisDonut"></div></div>
+          <div class="card"><div class="section-head"><div><div class="eyebrow">习惯</div><h3>今日完成度</h3></div></div><div id="habitDonut"></div></div>
+          <div class="card"><div class="section-head"><div><div class="eyebrow">毕业</div><h3>阶段总览</h3></div></div><div id="graduationDashboard"></div></div>
+        </div>
+      </section>
+
+      <section class="section" id="section-settings">
+        <div class="grid cols-2">
+          <div class="card">
+            <div class="section-head"><div><div class="eyebrow">数据</div><h3>备份与恢复</h3></div></div>
+            <div class="control-row wrap">
+              <button class="btn primary" id="exportJsonBtn">导出 JSON</button>
+              <button class="btn secondary" id="copyJsonBtn">复制 JSON</button>
+              <button class="btn ghost danger" id="clearAllBtn">清空全部数据</button>
+            </div>
+            <textarea id="importJsonInput" rows="10" placeholder="把备份 JSON 粘贴到这里，然后点击导入"></textarea>
+            <button class="btn primary full" id="importJsonBtn">导入 JSON</button>
+          </div>
+          <div class="card">
+            <div class="section-head"><div><div class="eyebrow">部署</div><h3>GitHub Pages 使用说明</h3></div></div>
+            <div class="markdown-body" id="deployGuide"></div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <dialog id="editDialog">
+    <form method="dialog" class="dialog-card" id="editForm">
+      <div class="section-head compact">
+        <div>
+          <div class="eyebrow">编辑</div>
+          <h3 id="editDialogTitle">编辑记录</h3>
+        </div>
+      </div>
+      <div id="editDialogBody" class="dialog-body"></div>
+      <div class="control-row end">
+        <button class="btn ghost danger" value="delete" id="editDeleteBtn">删除</button>
+        <button class="btn ghost" value="cancel">取消</button>
+        <button class="btn primary" value="save">保存</button>
+      </div>
+    </form>
+  </dialog>
+
+  <script src="./app.js"></script>
+</body>
+</html>
